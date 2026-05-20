@@ -26,30 +26,28 @@ describe('Teste do Painel: Consulta dos Lançamentos BPA', () => {
     cy.get('[name="buscaDataSolicita"]').click({ force: true });
     cy.wait(2000);
 
-    // Exportar para Excel
-    cy.get('body').then(($body) => {
+    // 4. Exportar para Excel com lógica de segurança robusta
+    cy.log('Exportando para Excel...');
+    cy.get('body', { timeout: 15000 }).then(($body) => {
       if ($body.find('#exportExcel').length > 0) {
-        cy.get('#exportExcel').click({ force: true });
-        cy.wait(1000);
+        cy.get('#exportExcel', { timeout: 15000 })
+          .first()
+          .scrollIntoView()
+          .click({ force: true });
+        cy.wait(1500);
       }
     });
 
-    // PAUSA para conferência
-    cy.log('Ações concluídas (Busca e Exportação). Clique em Resume (Play) para limpar.');
-    cy.pause();
-
-    // Limpar filtros (Tentando seletores comuns)
+    // 5. Limpar filtros ao final
+    cy.log('Limpando filtros...');
     cy.get('body').then(($body) => {
       if ($body.find('[name="limpar"]').length > 0) {
         cy.get('[name="limpar"]').click({ force: true });
       } else if ($body.find('#btnLimpar').length > 0) {
         cy.get('#btnLimpar').click({ force: true });
-      } else if ($body.find('[name="btnLimpar"]').length > 0) {
-        cy.get('[name="btnLimpar"]').click({ force: true });
-      } else {
-        cy.log('Botão limpar não encontrado com os seletores padrões.');
       }
     });
+    cy.wait(1000);
 
     cy.log('Automação concluída.');
   });

@@ -114,6 +114,25 @@ module.exports = defineConfig({
         fileExists(filePath) {
           return fs.existsSync(filePath);
         },
+        latestFileMtimeMs(dirPath) {
+          if (!dirPath || !fs.existsSync(dirPath)) {
+            return 0;
+          }
+
+          const files = fs
+            .readdirSync(dirPath)
+            .map((name) => path.join(dirPath, name))
+            .filter((filePath) => fs.existsSync(filePath) && fs.statSync(filePath).isFile());
+
+          if (files.length === 0) {
+            return 0;
+          }
+
+          return files.reduce((maxMtime, filePath) => {
+            const mtime = fs.statSync(filePath).mtimeMs;
+            return mtime > maxMtime ? mtime : maxMtime;
+          }, 0);
+        },
         resolveCredentialPath({ preferredPaths, fixturesDir }) {
           for (const candidate of preferredPaths || []) {
             if (candidate && fs.existsSync(candidate)) {

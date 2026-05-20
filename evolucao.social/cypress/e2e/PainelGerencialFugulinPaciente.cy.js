@@ -46,9 +46,8 @@ describe('Teste do Painel: Gerencial Fugulin x Paciente', () => {
     // Exportar para Excel
     cy.get('#exportExcel').click({ force: true });
 
-    // PAUSA: Para você poder visualizar a tela antes da limpeza final
-    cy.log('Ações concluídas. Clique no botão Resume (Play) do Cypress para limpar os filtros.');
-    cy.pause();
+    // PAUSA: Removida para execução automática de ponta a ponta
+    cy.wait(1000);
 
     // Limpar filtros
     cy.get('[name="limpar"]').click({ force: true });

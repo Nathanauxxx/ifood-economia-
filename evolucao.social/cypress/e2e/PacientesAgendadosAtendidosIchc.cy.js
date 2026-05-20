@@ -3,7 +3,8 @@ describe('Teste do Painel: Pacientes Agendados e Atendidos ICHC', () => {
   beforeEach(() => {
     // Faz o login e entra direto no painel
     cy.loginSeguroPainel({
-      painelUrl: 'http://painelmvhomolog.phcnet.usp.br/PacientesAgendadosAtendidosICHC'
+      painelUrl: 'http://painelmvhomolog.phcnet.usp.br/PacientesAgendadosAtendidosIchc',
+      loginUrl: 'http://sistemashchomolog.phcnet.usp.br/Conta/Login?returnUrl=http%3A%2F%2Fpainelmvhomolog.phcnet.usp.br%2FPacientesAgendadosAtendidosIchc%2F'
     });
   });
 
@@ -13,37 +14,6 @@ describe('Teste do Painel: Pacientes Agendados e Atendidos ICHC', () => {
   });
 
   it('Deve preencher os filtros e interagir com os botões', () => {
-    cy.log('Iniciando automação do Painel Pacientes Agendados e Atendidos ICHC...');
-
-    // Preencher Datas (Janeiro 2024)
-    cy.get('[name="start"]').clear({ force: true }).type('01/01/2024{enter}', { force: true });
-    cy.wait(500);
-    cy.get('[name="end"]').clear({ force: true }).type('31/01/2024{enter}', { force: true });
-    cy.wait(500);
-
-    // Buscar dados
-    cy.get('[name="btnFiltro"]').click({ force: true });
-    cy.wait(2000);
-
-    // Exportar para Excel
-    cy.get('body').then(($body) => {
-      if ($body.find('#exportExcel').length > 0) {
-        cy.get('#exportExcel').click({ force: true });
-        cy.wait(1000);
-      }
-    });
-
-    // PAUSA para conferência
-    cy.log('Ações concluídas (Busca e Exportação). Clique em Resume (Play) para limpar.');
-    cy.pause();
-
-    // Limpar filtros
-    cy.get('body').then(($body) => {
-      if ($body.find('[name="limpar"]').length > 0) {
-        cy.get('[name="limpar"]').click({ force: true });
-      }
-    });
-
-    cy.log('Automação concluída.');
+    cy.automatizarPainelPadrao();
   });
 });

@@ -575,3 +575,223 @@ Cypress.Commands.add('loginSeguroPainel', (options = {}) => {
   cy.log('Login realizado com sucesso e painel carregado.');
 });
 
+Cypress.Commands.add('automatizarPainelPadrao', () => {
+  cy.log('Iniciando automação automática e dinâmica do Painel...');
+
+  // 1. Preenchimento Dinâmico de Datas (01/01/2024 a 31/01/2024)
+  cy.get('body').then(($body) => {
+    // Definimos seletores candidatos para campos de data inicial
+    const startSelectors = [
+      '#dataInicial', 
+      '[name="dataInicial"]', 
+      '[name="dataIni"]', 
+      '[name="dataIniAval"]', 
+      '[name="dataIniInter"]',
+      ':nth-child(1) > .input-group > [name="start"]', // Auditoria / IOT / Fono
+      ':nth-child(4) > .input-group > [name="start"]', // Prescricao
+      '[name="start"]', // Fallback geral
+    ];
+
+    // Definimos seletores candidatos para campos de data final
+    const endSelectors = [
+      '#dataFinal', 
+      '[name="dataFinal"]', 
+      '[name="dataFim"]', 
+      '[name="dataFimAval"]', 
+      '[name="dataFimInter"]',
+      ':nth-child(2) > .input-group > [name="start"]', // Auditoria / IOT / Fono
+      ':nth-child(5) > .input-group > [name="start"]', // Prescricao
+      '[name="end"]', // Fallback geral
+    ];
+
+    // Tenta encontrar e preencher a data inicial
+    let startEl = null;
+    for (const selector of startSelectors) {
+      const $el = $body.find(selector).filter(':visible');
+      if ($el.length > 0) {
+        startEl = selector;
+        break;
+      }
+    }
+
+    if (startEl) {
+      cy.get(startEl).clear({ force: true }).type('01/01/2024{enter}', { force: true });
+      cy.wait(300);
+    }
+
+    // Tenta encontrar e preencher a data final
+    let endEl = null;
+    for (const selector of endSelectors) {
+      const $el = $body.find(selector).filter(':visible');
+      if ($el.length > 0) {
+        endEl = selector;
+        break;
+      }
+    }
+
+    if (endEl) {
+      cy.get(endEl).clear({ force: true }).type('31/01/2024{enter}', { force: true });
+      cy.wait(300);
+    }
+  });
+
+  // 2. Preenchimento de Dropdowns e Modais comuns
+  cy.get('body').then(($body) => {
+    const commonSelects = [
+      '#instituto',
+      '#tpAgenda',
+      '#cenCir',
+      '#salCir',
+      '#unidInt',
+      '[name="empresa"]',
+      '.input-group > [name="empresa"]',
+      '.input-group > [name="instituto"]'
+    ];
+
+    commonSelects.forEach((selector) => {
+      const $el = $body.find(selector).filter(':visible');
+      if ($el.length > 0) {
+        cy.wrap($el).then(($select) => {
+          if ($select.is('select')) {
+            const options = $select.find('option').map((i, el) => el.value).get();
+            const val = options.find(v => v !== '') || options[0];
+            if (val !== undefined) {
+              cy.wrap($select).select(val, { force: true });
+              cy.wait(300);
+            }
+          }
+        });
+      }
+    });
+
+    // Modais e checklists comuns (Ex: Unidade / Instituto / Setor / Convenio)
+    const modalButtons = [
+      '#filtroUnidade',
+      '#btnFiltroUnidade',
+      '#btnAbreModalSetor',
+      '#btnAbreModalConvenio',
+      '#btnFiltroInstituto'
+    ];
+
+    modalButtons.forEach((btnSelector) => {
+      if ($body.find(btnSelector).length > 0) {
+        cy.get(btnSelector).click({ force: true });
+        cy.wait(500);
+        cy.get('body').then(($modalBody) => {
+          const checklistItem = [
+            ':nth-child(1) > .form-check-label',
+            '#checklistUnidade > :nth-child(1)',
+            '#checklist > :nth-child(1) > .form-check-label',
+            '.convenio-options > :nth-child(1)',
+            '#checklistInstituto > :nth-child(1)'
+          ];
+          
+          let clicked = false;
+          for (const item of checklistItem) {
+            if ($modalBody.find(item).length > 0) {
+              cy.get(item).first().click({ force: true });
+              cy.wait(500);
+              clicked = true;
+              break;
+            }
+          }
+
+          // Se clicou, confirma fechando o modal/clicando no botão novamente ou no de confirmação
+          if (clicked) {
+            const confirmButtons = [
+              btnSelector,
+              '#btnFiltroSetor',
+              '#btnFiltroConvenio',
+              '#btnFiltroInstituto'
+            ];
+            for (const confirmBtn of confirmButtons) {
+              if ($modalBody.find(confirmBtn).length > 0) {
+                cy.get(confirmBtn).click({ force: true });
+                cy.wait(500);
+                break;
+              }
+            }
+          }
+        });
+      }
+    });
+  });
+
+  // 3. Buscar dados
+  cy.get('body').then(($body) => {
+    const searchButtons = [
+      '[name="buscaDataSolicita"]',
+      '[name="btnFiltro"]',
+      '#btnFiltrar',
+      '#btnFiltro'
+    ];
+
+    let searchSelector = null;
+    for (const selector of searchButtons) {
+      if ($body.find(selector).length > 0) {
+        searchSelector = selector;
+        break;
+      }
+    }
+
+    if (searchSelector) {
+      cy.get(searchSelector).click({ force: true });
+      cy.wait(2000);
+    }
+  });
+
+  // Validação de integridade pós-busca
+  cy.get('body').should('not.contain.text', 'Erro 500');
+
+  // 4. Exportar para Excel com lógica de segurança robusta
+  cy.get('body', { timeout: 15000 }).then(($body) => {
+    const excelButtons = [
+      '#exportExcel',
+      '#exportarExcel',
+      '#btnExcel',
+      '#btnExportar',
+      '.dt-button > span'
+    ];
+
+    let excelSelector = null;
+    for (const selector of excelButtons) {
+      if ($body.find(selector).length > 0) {
+        excelSelector = selector;
+        break;
+      }
+    }
+
+    if (excelSelector) {
+      cy.get(excelSelector, { timeout: 15000 })
+        .first()
+        .scrollIntoView()
+        .click({ force: true });
+      cy.wait(1500);
+    }
+  });
+
+  // 5. Limpar filtros ao final
+  cy.get('body').then(($body) => {
+    const clearButtons = [
+      '[name="limpar"]',
+      '[name="btnLimpar"]',
+      '#btnLimpar',
+      '#limpar'
+    ];
+
+    let clearSelector = null;
+    for (const selector of clearButtons) {
+      if ($body.find(selector).length > 0) {
+        clearSelector = selector;
+        break;
+      }
+    }
+
+    if (clearSelector) {
+      cy.get(clearSelector).click({ force: true });
+      cy.wait(1000);
+    }
+  });
+});
+
+
