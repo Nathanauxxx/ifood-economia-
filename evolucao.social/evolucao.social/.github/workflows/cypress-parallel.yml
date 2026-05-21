@@ -1,0 +1,97 @@
+name: Cypress CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  smoke:
+    name: Smoke (rapido)
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_USUARIO: ${{ secrets.CYPRESS_USUARIO }}
+      CYPRESS_SENHA: ${{ secrets.CYPRESS_SENHA }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run smoke suite
+        run: npm run cy:smoke
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-reports
+          path: cypress/results
+          if-no-files-found: ignore
+
+  full_parallel:
+    name: Full shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    env:
+      CYPRESS_USUARIO: ${{ secrets.CYPRESS_USUARIO }}
+      CYPRESS_SENHA: ${{ secrets.CYPRESS_SENHA }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: 1
+            script: cy:full:shard1
+          - shard: 2
+            script: cy:full:shard2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run full shard
+        run: npm run ${{ matrix.script }}
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-shard-${{ matrix.shard }}-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-shard-${{ matrix.shard }}-reports
+          path: cypress/results
+          if-no-files-found: ignore

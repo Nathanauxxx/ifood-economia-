@@ -1,0 +1,43 @@
+{
+  "name": "evolucao.social",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cypress open",
+    "test": "cypress run",
+    "cy:open": "cypress open",
+    "cy:report": "cypress run",
+    "cy:run": "cypress run --spec cypress/e2e/loginEFiltros.cy.js",
+    "cy:smoke": "cypress run --spec cypress/e2e/botoes.cy.js --env FULL_RUN=false,SAMPLE_STRATEGY=smart,MAX_UNIDADES=2,MAX_INSTITUTOS=2",
+    "cy:smoke:tag": "cypress run --env grepTags=@smoke,grepFilterSpecs=true",
+    "cy:smoke:tag:ff": "cypress run --env grepTags=@smoke,grepFilterSpecs=true,FAIL_FAST_PLUGIN=true,FAIL_FAST_BAIL=1",
+    "cy:smoke:verbose": "cypress run --spec cypress/e2e/botoes.cy.js --env FULL_RUN=false,SAMPLE_STRATEGY=smart,MAX_UNIDADES=2,MAX_INSTITUTOS=2,VERBOSE_LOGS=true",
+    "cy:full": "cypress run --spec cypress/e2e/botoes.cy.js --env FULL_RUN=true",
+    "cy:full:shard1": "cypress run --spec cypress/e2e/botoes.cy.js --env FULL_RUN=true,SHARD_TOTAL=2,SHARD_INDEX=0",
+    "cy:full:shard2": "cypress run --spec cypress/e2e/botoes.cy.js --env FULL_RUN=true,SHARD_TOTAL=2,SHARD_INDEX=1",
+    "cy:botoes:report": "cypress run --spec cypress/e2e/botoes.cy.js",
+    "cy:botoes:painel": "cypress run --spec cypress/e2e/botoes.cy.js --env PAINEL_KEY=evolucaoSocial",
+    "cy:painel:evolucaoSocial": "cypress run --spec cypress/e2e/botoes.cy.js --env PAINEL_KEY=evolucaoSocial",
+    "cy:painel:atendCirFraturaExposta": "cypress run --spec cypress/e2e/botoes.cy.js --env PAINEL_KEY=atendCirFraturaExposta",
+    "start-fratura": "cypress open --e2e --env PAINEL_KEY=atendCirFraturaExposta",
+    "start-selecao-manual": "cypress open --e2e --config specPattern=cypress/e2e/selecao-manual-painel.cy.js",
+    "cy:botoes:todos": "cypress run --spec cypress/e2e/botoes.cy.js --env TESTAR_TODOS_PAINEIS=true",
+    "cy:mapa-botoes": "cypress run --spec cypress/e2e/mapaBotoesAvancado.cy.js",
+    "cy:filtros": "cypress run --spec cypress/e2e/filtros.cy.js",
+    "cy:botoes": "cypress run --spec cypress/e2e/botoes.cy.js",
+    "cy:janeiro": "cypress run --spec cypress/e2e/janeiro2024.cy.js",
+    "primeiro-login": "echo Use: $env:CYPRESS_USUARIO='seu_usuario'; $env:CYPRESS_SENHA='sua_senha'; npm run cy:run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@cypress/grep": "^6.0.0",
+    "cypress": "^15.14.2",
+    "cypress-fail-fast": "^8.1.0",
+    "cypress-mochawesome-reporter": "^4.0.2",
+    "mochawesome": "^7.1.4"
+  }
+}

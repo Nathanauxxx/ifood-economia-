@@ -1,0 +1,37 @@
+********LINK DE ACOMPANHAMENTO DE CHAMADOS********
+
+http://metabase.phcnet.usp.br:3000/public/dashboard/25a6ff74-08f3-4197-b35c-1d0ad761168b?data_de_abertura=&data_de_solu%25C3%25A7%25C3%25A3o=&status=2&status=1&status=4&status=3&entidade=&grupo_t%25C3%25A9cnico=DESENVOLVIMENTO%20QA#refresh=60](http://metabase.phcnet.usp.br:3000/public/dashboard/25a6ff74-08f3-4197-b35c-1d0ad761168b?data_de_abertura=&data_de_solu%25C3%25A7%25C3%25A3o=&status=2&status=1&status=4&status=3&entidade=&grupo_t%25C3%25A9cnico=DESENVOLVIMENTO%20QA#refresh=60
+
+********SIGLAS DE EMPRESAS********
+
+IOT - Instituto de Ortopedia
+
+ICHC - Instituto Central
+
+IPQ - Instituto de Psiquiatria
+
+ICr - Instituto da Criança
+
+IPER - Instituto Perdizes
+
+CEAC - Centro de Atenção ao Colaborador
+
+ICESP - Instituto do Câncer
+
+INCOR - Instituto do Coração
+
+********LINKS ÚTEIS********
+
+Intranet MV - [http://intranetmv.phcnet.usp.br/](http://intranetmv.phcnet.usp.br/)
+
+PEP - Prontuário Eletrônico - [http://html5trn.phcnet.usp.br:82/mvpep/](http://html5trn.phcnet.usp.br:82/mvpep/)
+
+SOUL - Administrativo - [http://html5trn.phcnet.usp.br:82/soul-mv/](http://html5trn.phcnet.usp.br:82/soul-mv/)
+
+Tela de prestadores – permite alterar o tipo de prestador para uso do PEP:
+
+CAD_PRE
+teste http://testeqahomolog.phcnet.usp.br/Projects/Index
+Painel MV HOMOLOGAÇÃO - [http://painelmvhomolog.phcnet.usp.br/)
+
+Painel MV PRODUÇÃO - [http://painelmv.phcnet.usp.br/](http://painelmv.phcnet.usp.br/)

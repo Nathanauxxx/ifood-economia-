@@ -1,0 +1,84 @@
+{
+  "atendCirFraturaExposta": {
+    "nome": "Atendimento Cirurgico - Fratura Exposta",
+    "url": "http://painelmvhomolog.phcnet.usp.br/AtendCirFraturaExposta",
+    "loginUrl": "http://sistemashchomolog.phcnet.usp.br/Conta/Login?returnUrl=http%3A%2F%2Fpainelmvhomolog.phcnet.usp.br%2FAtendCirFraturaExposta%2F",
+    "seletores": {
+      "unidade": "[name=\"filtro-grupo\"]",
+      "institutos": "[name=\"filtro-subGrupo\"]",
+      "dataInicial": "[name=\"start\"]",
+      "dataFinal": "[name=\"end\"]",
+      "filtrar": "[name=\"btnFiltro\"]"
+    },
+    "botoes": [
+      {
+        "nome": "Filtrar",
+        "tipo": "filtrar",
+        "seletor": "[name=\"btnFiltro\"]"
+      },
+      {
+        "nome": "Exportar Excel",
+        "tipo": "exportar",
+        "seletor": null,
+        "texto": "Exportar"
+      },
+      {
+        "nome": "Limpar",
+        "tipo": "limpar",
+        "seletor": null,
+        "texto": "Limpar"
+      }
+    ]
+  },
+  "evolucaoSocial": {
+    "nome": "Painel Evolucao Social",
+    "url": "http://painelmvhomolog.phcnet.usp.br/PainelEvolucaoSocial",
+    "loginUrl": "http://sistemashchomolog.phcnet.usp.br/Conta/Login?returnUrl=http%3A%2F%2Fpainelmvhomolog.phcnet.usp.br%2FPainelEvolucaoSocial%2F",
+    "seletores": {
+      "unidade": "#unidInt",
+      "institutos": "#instituto",
+      "dataInicial": ":nth-child(1) > .input-group > [name=\"start\"]",
+      "dataFinal": ":nth-child(2) > .input-group > [name=\"start\"]",
+      "filtrar": "[name=\"buscaDataSolicita\"]"
+    },
+    "botoes": [
+      {
+        "nome": "Filtrar",
+        "tipo": "filtrar",
+        "seletor": "[name=\"buscaDataSolicita\"]"
+      },
+      {
+        "nome": "Exportar Excel",
+        "tipo": "exportar",
+        "seletor": null,
+        "texto": "Exportar"
+      },
+      {
+        "nome": "Limpar",
+        "tipo": "limpar",
+        "seletor": null,
+        "texto": "Limpar"
+      }
+    ]
+  },
+  "gerencialFugulin": {
+    "nome": "Gerencial Fugulin",
+    "url": "http://painelmvhomolog.phcnet.usp.br/GerencialFugulin",
+    "loginUrl": "http://sistemashchomolog.phcnet.usp.br/Conta/Login?returnUrl=http%3A%2F%2Fpainelmvhomolog.phcnet.usp.br%2FGerencialFugulin%2F",
+    "seletores": {
+      "unidade": "[name=\"filtro-grupo\"]",
+      "institutos": "[name=\"filtro-subGrupo\"]",
+      "filtrarUnidade": "#btnFiltroUnidade",
+      "dataInicial": "input[name=\"start\"]",
+      "dataFinal": "input[name=\"end\"]",
+      "filtrar": "[name=\"btnFiltro\"]"
+    },
+    "botoes": [
+      {
+        "nome": "Filtrar",
+        "tipo": "filtrar",
+        "seletor": "[name=\"btnFiltro\"]"
+      }
+    ]
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 2,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-05-15T12:11:09.500Z",
+    "end": "2026-05-15T12:11:31.544Z",
+    "duration": 22044,
+    "testsRegistered": 2,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "394918be-c9e0-4c61-b57c-6857b1cbf1e3",
+      "title": "",
+      "fullFile": "cypress\\e2e\\gerencial-fugulin.cy.js",
+      "file": "cypress\\e2e\\gerencial-fugulin.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "425a0d7a-e605-4264-b30a-e40cb545191b",
+          "title": "Teste do Painel: Gerencial Fugulin",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "Deve ler o modulo e automatizar a filtragem",
+              "fullTitle": "Teste do Painel: Gerencial Fugulin Deve ler o modulo e automatizar a filtragem",
+              "timedOut": null,
+              "duration": 18836,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.log(`Modulo carregado: ${modulo.nome}`);\ncy.wait(2000);\nconst dataInicial = '01/01/2024';\nconst dataFinal = '31/12/2024';\npreencherDataComFallback(modulo.seletores.dataInicial, dataInicial, 0, 'Data inicial');\npreencherDataComFallback(modulo.seletores.dataFinal, dataFinal, 1, 'Data final');\nselecionarPrimeiraOpcao(modulo.seletores.unidade);\nselecionarPrimeiraOpcao(modulo.seletores.institutos);\ncy.get('body').then($body => {\n  const seletorFiltrarUnidade = modulo.seletores.filtrarUnidade || '#btnFiltroUnidade';\n  if ($body.find(seletorFiltrarUnidade).length > 0) {\n    cy.get(seletorFiltrarUnidade).first().click({\n      force: true\n    });\n  }\n});\ncy.get('body').then($body => {\n  if ($body.find(modulo.seletores.filtrar).length > 0) {\n    cy.get(modulo.seletores.filtrar).first().click({\n      force: true\n    });\n  } else {\n    cy.contains('button, a, input', /filtrar|buscar|pesquisar/i).first().click({\n      force: true\n    });\n  }\n  cy.get('body').should('not.contain.text', 'Erro 500');\n  cy.get('body').should('not.contain.text', 'Exception');\n  cy.get('body').should('not.contain.text', 'stack trace');\n});\ncy.url().then(urlAtual => {\n  expect(urlAtual).to.include('/GerencialFugulin');\n});",
+              "err": {},
+              "uuid": "9498a00e-742e-4e14-83c4-fb49d940e04f",
+              "parentUUID": "425a0d7a-e605-4264-b30a-e40cb545191b",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Deve validar que os seletores do modulo estao disponiveis para automacao",
+              "fullTitle": "Teste do Painel: Gerencial Fugulin Deve validar que os seletores do modulo estao disponiveis para automacao",
+              "timedOut": null,
+              "duration": 586,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "expect(modulo.seletores.filtrarUnidade).to.be.a('string').and.not.be.empty;\nexpect(modulo.seletores.filtrar).to.be.a('string').and.not.be.empty;\ncy.get('body').then($body => {\n  const encontrouAlgumSeletor = $body.find(modulo.seletores.unidade).length > 0 || $body.find(modulo.seletores.institutos).length > 0 || $body.find(modulo.seletores.dataInicial).length > 0 || $body.find(modulo.seletores.dataFinal).length > 0 || $body.find(modulo.seletores.filtrarUnidade).length > 0 || $body.find(modulo.seletores.filtrar).length > 0;\n  expect(encontrouAlgumSeletor, 'ao menos um seletor do modulo na tela').to.be.true;\n});",
+              "err": {},
+              "uuid": "9743d25b-d683-4396-8ba3-f0e30e8ecf8c",
+              "parentUUID": "425a0d7a-e605-4264-b30a-e40cb545191b",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "9498a00e-742e-4e14-83c4-fb49d940e04f",
+            "9743d25b-d683-4396-8ba3-f0e30e8ecf8c"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 19422,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress\\results\\reports\\.jsons",
+        "charts": true,
+        "reportPageTitle": "Relatorio de Testes - Evolucao Social",
+        "embeddedScreenshots": true,
+        "inlineAssets": true,
+        "saveAllAttempts": false,
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

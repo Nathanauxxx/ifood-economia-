@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFood Economia - Planejador Financeiro</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --ifood-red: #ea1d2c;
+            --ifood-light-red: #ffe8ea;
+            --ifood-dark: #3e3e2f;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fa;
+        }
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--ifood-red) !important;
+            font-size: 1.6rem;
+        }
+        .navbar-brand span {
+            color: var(--ifood-dark);
+            font-weight: 400;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: white;
+            margin-bottom: 20px;
+        }
+        .btn-ifood {
+            background-color: var(--ifood-red);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .btn-ifood:hover {
+            background-color: #d1121f;
+            color: white;
+        }
+        .btn-outline-ifood {
+            color: var(--ifood-red);
+            border: 2px solid var(--ifood-red);
+            font-weight: 600;
+        }
+        .btn-outline-ifood:hover {
+            background-color: var(--ifood-red);
+            color: white;
+        }
+        .economy-alert {
+            background-color: var(--ifood-light-red);
+            border-left: 5px solid var(--ifood-red);
+            color: #a8101a;
+        }
+        .stat-card {
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="bi bi-cart4 text-danger me-2"></i>iFood <span>Economia</span></a>
+            <span class="navbar-text ms-auto d-none" id="userInfo">
+                <span class="me-2 text-dark" id="userName">Usuário</span>
+                <button class="btn btn-sm btn-outline-secondary" onclick="logout()">Sair <i class="bi bi-box-arrow-right"></i></button>
+            </span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- AUTH SECTION -->
+        <div id="authSection" class="row justify-content-center my-5">
+            <div class="col-md-5">
+                <div class="card card-custom p-4">
+                    <ul class="nav nav-tabs mb-4" id="authTabs" role="tablist">
+                        <li class="nav-item flex-fill text-center">
+                            <button class="nav-link active w-100 fw-bold" id="login-tab" data-bs-toggle="tab" data-bs-target="#loginPane" type="button">Entrar</button>
+                        </li>
+                        <li class="nav-item flex-fill text-center">
+                            <button class="nav-link w-100 fw-bold" id="register-tab" data-bs-toggle="tab" data-bs-target="#registerPane" type="button">Cadastrar</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="authTabsContent">
+                        <!-- Login -->
+                        <div class="tab-pane fade show active" id="loginPane">
+                            <form id="loginForm" onsubmit="handleLogin(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">E-mail</label>
+                                    <input type="email" id="loginEmail" class="form-control" placeholder="exemplo@gmail.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Senha</label>
+                                    <input type="password" id="loginSenha" class="form-control" placeholder="Sua senha" required>
+                                </div>
+                                <button type="submit" class="btn btn-ifood w-100 py-2">Fazer Login</button>
+                            </form>
+                        </div>
+                        <!-- Register -->
+                        <div class="tab-pane fade" id="registerPane">
+                            <form id="registerForm" onsubmit="handleRegister(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Nome Completo</label>
+                                    <input type="text" id="regNome" class="form-control" placeholder="Seu Nome" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">E-mail</label>
+                                    <input type="email" id="regEmail" class="form-control" placeholder="nome@provedor.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Senha</label>
+                                    <input type="password" id="regSenha" class="form-control" placeholder="Mínimo 6 caracteres" required>
+                                </div>
+                                <button type="submit" class="btn btn-ifood w-100 py-2">Criar Conta</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD (HIDDEN ON START) -->
+        <div id="mainDashboard" class="d-none">
+
+            <!-- STATS OVERVIEW -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card bg-success d-flex align-items-center justify-content-between shadow-sm">
+                        <div>
+                            <small class="text-white-50 uppercase fw-bold">Receitas Mensais</small>
+                            <h3 class="fw-bold mb-0" id="statReceitas">R$ 0,00</h3>
+                        </div>
+                        <i class="bi bi-arrow-up-circle fs-1 text-white-50"></i>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card bg-danger d-flex align-items-center justify-content-between shadow-sm">
+                        <div>
+                            <small class="text-white-50 uppercase fw-bold">Despesas Registradas</small>
+                            <h3 class="fw-bold mb-0" id="statDespesas">R$ 0,00</h3>
+                        </div>
+                        <i class="bi bi-arrow-down-circle fs-1 text-white-50"></i>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card bg-primary d-flex align-items-center justify-content-between shadow-sm">
+                        <div>
+                            <small class="text-white-50 uppercase fw-bold">Saldo do Mês</small>
+                            <h3 class="fw-bold mb-0" id="statSaldo">R$ 0,00</h3>
+                        </div>
+                        <i class="bi bi-wallet2 fs-1 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORECAST & SAVINGS SYSTEM (iFOOD ECONOMIA EXCLUSIVE) -->
+            <div class="row mb-4">
+                <!-- Projeção de Gastos Mensais -->
+                <div class="col-md-6">
+                    <div class="card card-custom p-4 h-100">
+                        <h5 class="fw-bold mb-3 text-secondary"><i class="bi bi-graph-up text-danger me-2"></i>Previsão de Gasto Mensal</h5>
+                        <div class="row align-items-center">
+                            <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                                <span class="text-muted d-block small">Gasto Médio Diário:</span>
+                                <h4 class="fw-semibold text-dark" id="gastoMedio">R$ 0,00</h4>
+                                <span class="text-muted d-block small mt-2">Gasto Projetado no Mês:</span>
+                                <h3 class="fw-bold text-danger" id="gastoProjetado">R$ 0,00</h3>
+                            </div>
+                            <div class="col-sm-6 bg-light p-3 rounded border text-center">
+                                <span class="badge mb-2 px-3 py-2 text-wrap" id="statusPrevisaoBadge">Processando...</span>
+                                <p class="small text-muted mb-0" id="previsaoAlerta">Adicione transações de despesas para calcularmos sua projeção para o mês corrente.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inteligência de Economia iFood -->
+                <div class="col-md-6">
+                    <div class="card card-custom p-4 h-100 text-white" style="background-color: var(--ifood-dark)">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Motor de Economia iFood</h5>
+                            <span class="badge bg-warning text-dark px-3 py-2 fw-bold" id="taxaSugerida">Meta: 20%</span>
+                        </div>
+                        <div class="inner-economy-body">
+                            <div class="row mb-3">
+                                <div class="col-6 border-end border-secondary">
+                                    <span class="text-white-50 small d-block">Gastos Estilo iFood / Delivery:</span>
+                                    <h4 class="fw-bold text-warning mb-0" id="gastosDelivery">R$ 0,00</h4>
+                                </div>
+                                <div class="col-6">
+                                    <span class="text-white-50 small d-block">Economia Recomendada (15%):</span>
+                                    <h4 class="fw-bold text-success mb-0" id="economiaPotencial">R$ 0,00</h4>
+                                </div>
+                            </div>
+                            <div class="bg-dark bg-opacity-50 p-2 rounded small mb-2 text-warning-emphasis">
+                                <i class="bi bi-info-circle me-1 text-warning"></i> <span id="taxaEconomiaAtualText">Você economizou % do seu orçamento total.</span>
+                            </div>
+                            <div id="dicasEconomiaList" class="small text-white-50">
+                                <!-- Dinâmico -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USER TRANSACTIONS SECTION -->
+            <div class="row">
+                <!-- Add Transaction -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card card-custom p-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle text-danger me-2"></i>Nova Transação</h5>
+                        <form id="transacaoForm" onsubmit="handleSalvarTransacao(event)">
+                            <div class="mb-3">
+                                <label class="form-label">Descrição / Nome do Estabelecimento</label>
+                                <input type="text" id="tDescricao" class="form-control" placeholder="Ex: iFood Pizzaria, Salário, Uber" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Valor (R$)</label>
+                                    <input type="number" step="0.01" min="0.01" id="tValor" class="form-control" placeholder="0.00" required>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Data</label>
+                                    <input type="date" id="tData" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Tipo</label>
+                                    <select id="tTipo" class="form-select" onchange="filtraCategoriasPorTipo(this.value)">
+                                        <option value="Despesa" selected>Despesa</option>
+                                        <option value="Receita">Receita</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Categoria</label>
+                                    <select id="tCategoria" class="form-select">
+                                        <!-- Preenchido via API -->
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-ifood w-100 py-2"><i class="bi bi-check-circle me-2"></i>Registrar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Transaction List -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card card-custom p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0"><i class="bi bi-list-task text-danger me-2"></i>Registros Recentes</h5>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="carregarDadosDoPainel()"><i class="bi bi-arrow-clockwise"></i> Listar</button>
+                        </div>
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <th>Categoria</th>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaTransacoes">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">Carregando transações...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = ""; // Caminho relativo pois servimos o frontend do próprio ASP.NET Core
+        let token = localStorage.getItem("token") || "";
+        let categoriasBuffer = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Definir data padrão no picker de transações para hoje
+            document.getElementById("tData").value = new Date().toISOString().split('T')[0];
+            verificarAutenticacao();
+        });
+
+        function verificarAutenticacao() {
+            if (token) {
+                document.getElementById("authSection").classList.add("d-none");
+                document.getElementById("mainDashboard").classList.remove("d-none");
+                document.getElementById("userInfo").classList.remove("d-none");
+                
+                // Nome amigável decodificado ou padrão
+                const payload = parsedJwt(token);
+                if (payload && payload.unique_name) {
+                    document.getElementById("userName").textContent = payload.unique_name;
+                }
+                
+                carregarDadosDoPainel();
+            } else {
+                document.getElementById("authSection").classList.remove("d-none");
+                document.getElementById("mainDashboard").classList.add("d-none");
+                document.getElementById("userInfo").classList.add("d-none");
+            }
+        }
+
+        function parsedJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                return JSON.parse(window.atob(base64));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById("loginEmail").value;
+            const senha = document.getElementById("loginSenha").value;
+
+            try {
+                const res = await fetch(`${API_URL}/api/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    token = data.token;
+                    localStorage.setItem("token", token);
+                    verificarAutenticacao();
+                } else {
+                    alert(data.mensagem || "Credenciais inválidas. Verifique.");
+                }
+            } catch (err) {
+                alert("Erro ao tentar fazer login. Tente novamente.");
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const nome = document.getElementById("regNome").value;
+            const email = document.getElementById("regEmail").value;
+            const senha = document.getElementById("regSenha").value;
+
+            try {
+                const res = await fetch(`${API_URL}/api/auth/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome, email, senha })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    token = data.token;
+                    localStorage.setItem("token", token);
+                    verificarAutenticacao();
+                } else {
+                    alert(data.mensagem || "Erro ao criar conta.");
+                }
+            } catch (err) {
+                alert("Erro de conexão com a API.");
+            }
+        }
+
+        function logout() {
+            token = "";
+            localStorage.removeItem("token");
+            verificarAutenticacao();
+        }
+
+        // CARREGA TODOS OS RECURSOS DO PAINEL
+        async function carregarDadosDoPainel() {
+            if (!token) return;
+
+            await Promise.all([
+                carregarCategorias(),
+                carregarTransacoes(),
+                carregarProjetado(),
+                carregarEconomia()
+            ]);
+        }
+
+        async function carregarCategorias() {
+            try {
+                const res = await fetch(`${API_URL}/api/categorias`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    categoriasBuffer = await res.json();
+                    filtraCategoriasPorTipo(document.getElementById("tTipo").value);
+                }
+            } catch (err) {
+                console.error("Erro ao carregar categorias", err);
+            }
+        }
+
+        function filtraCategoriasPorTipo(tipo) {
+            const select = document.getElementById("tCategoria");
+            select.innerHTML = "";
+            const filtradas = categoriasBuffer.filter(c => c.tipo === tipo);
+            filtradas.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.id;
+                opt.textContent = c.nome;
+                select.appendChild(opt);
+            });
+        }
+
+        async function carregarTransacoes() {
+            const tabela = document.getElementById("tabelaTransacoes");
+            try {
+                const res = await fetch(`${API_URL}/api/transacoes`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const transacoes = await res.json();
+                    
+                    if (transacoes.length === 0) {
+                        tabela.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Nenhuma transação cadastrada ainda.</td></tr>`;
+                        document.getElementById("statReceitas").textContent = "R$ 0,00";
+                        document.getElementById("statDespesas").textContent = "R$ 0,00";
+                        document.getElementById("statSaldo").textContent = "R$ 0,00";
+                        return;
+                    }
+
+                    let somaReceitas = 0;
+                    let somaDespesas = 0;
+                    
+                    tabela.innerHTML = "";
+                    transacoes.forEach(t => {
+                        const dateFormatted = new Date(t.data).toLocaleDateString("pt-BR", { timeZone: 'UTC' });
+                        const valueFormatted = t.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                        const isDespesa = t.tipo === "Despesa";
+                        
+                        if (isDespesa) somaDespesas += t.valor;
+                        else somaReceitas += t.valor;
+
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong class="text-dark">${t.descricao}</strong></td>
+                            <td><span class="badge" style="background-color: ${t.categoriaCor || '#6c757d'}"><i class="bi bi-${t.categoriaIcone || 'tag-fill'} me-1"></i> ${t.categoriaNome}</span></td>
+                            <td>${dateFormatted}</td>
+                            <td><span class="badge ${isDespesa ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'}">${t.tipo}</span></td>
+                            <td><strong class="${isDespesa ? 'text-danger' : 'text-success'}">${isDespesa ? '-' : '+'} ${valueFormatted}</strong></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger" onclick="excluirTransacao('${t.id}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        tabela.appendChild(tr);
+                    });
+
+                    document.getElementById("statReceitas").textContent = somaReceitas.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    document.getElementById("statDespesas").textContent = somaDespesas.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    
+                    const saldoTotal = somaReceitas - somaDespesas;
+                    const elSaldo = document.getElementById("statSaldo");
+                    elSaldo.textContent = saldoTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    if (saldoTotal < 0) {
+                        elSaldo.parentElement.parentElement.className = "stat-card bg-danger d-flex align-items-center justify-content-between shadow-sm";
+                    } else {
+                        elSaldo.parentElement.parentElement.className = "stat-card bg-primary d-flex align-items-center justify-content-between shadow-sm";
+                    }
+
+                }
+            } catch (err) {
+                console.error("Erro ao carregar transações", err);
+            }
+        }
+
+        async function carregarProjetado() {
+            try {
+                const res = await fetch(`${API_URL}/api/planejamento/previsao-mensal`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById("gastoMedio").textContent = data.gastoMedioDiario.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    document.getElementById("gastoProjetado").textContent = data.gastoProjetadoMensal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    
+                    const badge = document.getElementById("statusPrevisaoBadge");
+                    badge.textContent = data.statusPrevisao;
+                    
+                    if (data.statusPrevisao.includes("Alerta") || data.statusPrevisao.includes("Margem")) {
+                        badge.className = "badge bg-danger mb-2 px-3 py-2 text-wrap";
+                    } else if (data.statusPrevisao.includes("Planejado")) {
+                        badge.className = "badge bg-success mb-2 px-3 py-2 text-wrap";
+                    } else {
+                        badge.className = "badge bg-warning text-dark mb-2 px-3 py-2 text-wrap";
+                    }
+
+                    document.getElementById("previsaoAlerta").textContent = data.alertaMensagem;
+                }
+            } catch (err) {
+                console.error("Erro ao carregar planejamento", err);
+            }
+        }
+
+        async function carregarEconomia() {
+            try {
+                const res = await fetch(`${API_URL}/api/planejamento/economia`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById("gastosDelivery").textContent = data.gastosAlimentacaoDelivery.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    document.getElementById("economiaPotencial").textContent = data.economiaPotencialIfood.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    document.getElementById("taxaEconomiaAtualText").textContent = `Você poupou ${data.taxaEconomiaAtual}% da sua receita total neste mês.`;
+
+                    const divDicas = document.getElementById("dicasEconomiaList");
+                    divDicas.innerHTML = "";
+                    data.dicasEconomia.forEach(dica => {
+                        const p = document.createElement("p");
+                        p.className = "mb-2 border-bottom border-secondary pb-1";
+                        p.innerHTML = `<i class="bi bi-star-fill text-warning me-1"></i> ${dica}`;
+                        divDicas.appendChild(p);
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function handleSalvarTransacao(e) {
+            e.preventDefault();
+            const descricao = document.getElementById("tDescricao").value;
+            const valor = parseFloat(document.getElementById("tValor").value);
+            const data = document.getElementById("tData").value;
+            const tipo = document.getElementById("tTipo").value;
+            const categoriaId = parseInt(document.getElementById("tCategoria").value);
+
+            try {
+                const res = await fetch(`${API_URL}/api/transacoes`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ descricao, valor, data, tipo, categoriaId })
+                });
+
+                if (res.ok) {
+                    // Resetar form
+                    document.getElementById("tDescricao").value = "";
+                    document.getElementById("tValor").value = "";
+                    document.getElementById("tData").value = new Date().toISOString().split('T')[0];
+                    
+                    carregarDadosDoPainel();
+                } else {
+                    const errData = await res.json();
+                    alert(errData.mensagem || "Erro ao salvar transação.");
+                }
+            } catch (err) {
+                alert("Erro ao comunicar com o servidor.");
+            }
+        }
+
+        async function excluirTransacao(id) {
+            if (!confirm("Tem certeza que deseja excluir esta transação?")) return;
+
+            try {
+                const res = await fetch(`${API_URL}/api/transacoes/${id}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    carregarDadosDoPainel();
+                } else {
+                    alert("Erro ao tentar excluir.");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

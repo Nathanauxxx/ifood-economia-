@@ -1,0 +1,6 @@
+@ifood_HostAddress = http://localhost:5279
+
+GET {{ifood_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

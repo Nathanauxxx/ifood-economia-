@@ -1,0 +1,45 @@
+describe('Teste do Painel: Reação Transf.', () => {
+
+  beforeEach(() => {
+    // Faz o login e entra direto no painel
+    cy.loginSeguroPainel({
+      painelUrl: 'http://painelmvhomolog.phcnet.usp.br/ReacaoTransfusional'
+    });
+  });
+
+  // Ignora erros da aplicação para não quebrar o teste do Cypress
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    return false;
+  });
+
+  it('Deve preencher os filtros e interagir com os botões', () => {
+    cy.log('Iniciando automação do Painel Reação Transf...');
+
+    // Preencher Datas (Janeiro 2024)
+    cy.get('[name="start"]').clear({ force: true }).type('01/01/2024{enter}', { force: true });
+    cy.wait(500);
+    cy.get('[name="end"]').clear({ force: true }).type('31/01/2024{enter}', { force: true });
+    cy.wait(500);
+
+    // Filtrar
+    cy.get('[name="btnFiltro"]').click({ force: true });
+    cy.wait(2000);
+
+    // Exportar para Excel
+    cy.get('body').then(($body) => {
+      if ($body.find('#exportExcel').length > 0) {
+        cy.get('#exportExcel').click({ force: true });
+        cy.wait(1000);
+      }
+    });
+
+    // PAUSA para conferência
+    cy.log('Ações concluídas (Filtro e Exportação). Clique em Resume (Play) para limpar.');
+    cy.pause();
+
+    // Limpar filtros
+    cy.get('[name="limpar"]').click({ force: true });
+
+    cy.log('Automação concluída.');
+  });
+});
